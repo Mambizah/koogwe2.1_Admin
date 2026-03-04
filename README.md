@@ -17,7 +17,7 @@ If you are developing a production application, we recommend using TypeScript wi
 
 ## Deploy sur Render
 
-Ce repo est prêt pour Render via le fichier `render.yaml` à la racine du projet.
+Utilise `render.yaml` dans ce dossier `admin` (ici, `rootDir` est `.`).
 
 ### Option 1 — Blueprint (recommandé)
 
@@ -29,7 +29,7 @@ Ce repo est prêt pour Render via le fichier `render.yaml` à la racine du proje
 ### Option 2 — Static Site manuel
 
 - Type: **Static Site**
-- Root Directory: `admin`
+- Root Directory: `.` (si la racine du repo est déjà `admin`)
 - Build Command: `npm ci && npm run build`
 - Publish Directory: `dist`
 - Environment Variable: `VITE_API_URL=https://web-production-8d34f.up.railway.app`
