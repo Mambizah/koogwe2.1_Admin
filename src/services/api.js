@@ -14,7 +14,6 @@ api.interceptors.response.use(
   res => res.data,
   err => {
     if (err.response?.status === 401 || err.response?.status === 403) {
-      // Ne pas rediriger sur la page de login elle-même
       if (!window.location.pathname.includes('login') && window.location.pathname !== '/') {
         localStorage.removeItem('koogwe_admin_token')
         window.location.href = '/'
@@ -24,75 +23,76 @@ api.interceptors.response.use(
   }
 )
 
-// ── Auth ──────────────────────────────────────────────────────────────────────
+// Auth
 export const authService = {
-  // Connexion admin uniquement — rejette si rôle ≠ ADMIN
   adminLogin: (email, password) => api.post('/auth/admin-login', { email, password }),
-  // Connexion générique (non utilisée par le dashboard)
-  login:      (email, password) => api.post('/auth/login', { email, password }),
 }
 
-// ── Dashboard ─────────────────────────────────────────────────────────────────
+// Dashboard
 export const dashboardService = {
   getStats:       () => api.get('/admin/dashboard/stats'),
   getRecentRides: () => api.get('/admin/dashboard/rides/recent'),
   getPendingDocs: () => api.get('/admin/dashboard/documents/pending'),
 }
 
-// ── Chauffeurs ────────────────────────────────────────────────────────────────
+// Chauffeurs
 export const driversService = {
-  getAll:   ()    => api.get('/admin/drivers'),
-  getOne:   (id)  => api.get(`/admin/drivers/${id}`),
-  suspend:  (id)  => api.patch(`/admin/drivers/${id}/suspend`),
-  activate: (id)  => api.patch(`/admin/drivers/${id}/activate`),
+  getAll:    ()          => api.get('/admin/drivers'),
+  getOne:    (id)        => api.get(`/admin/drivers/${id}`),
+  suspend:   (id)        => api.patch(`/admin/drivers/${id}/suspend`),
+  activate:  (id)        => api.patch(`/admin/drivers/${id}/activate`),
+  // ✅ AJOUTÉ: approuver/refuser manuellement
+  approve:   (id)        => api.patch(`/admin/drivers/${id}/approval`, { approved: true }),
+  reject:    (id, note)  => api.patch(`/admin/drivers/${id}/approval`, { approved: false, adminNotes: note }),
 }
 
-// ── Documents ─────────────────────────────────────────────────────────────────
+// Documents
 export const documentsService = {
-  getAll:  (status) => api.get(`/admin/documents${status && status !== 'ALL' ? `?status=${status}` : ''}`),
-  getPending: ()     => api.get('/admin/documents?status=PENDING'),
-  approve: (id)              => api.patch(`/admin/documents/${id}/approve`),
-  reject:  (id, reason)      => api.patch(`/admin/documents/${id}/reject`, { reason }),
+  getAll:     (status) => api.get(`/admin/documents${status && status !== 'ALL' ? `?status=${status}` : ''}`),
+  getPending: ()       => api.get('/admin/documents?status=PENDING'),
+  approve:    (id)          => api.patch(`/admin/documents/${id}/approve`),
+  reject:     (id, reason)  => api.patch(`/admin/documents/${id}/reject`, { reason }),
 }
 
-// ── Passagers ─────────────────────────────────────────────────────────────────
+// Passagers
 export const passengersService = {
   getAll:   ()    => api.get('/admin/passengers'),
   suspend:  (id)  => api.patch(`/admin/passengers/${id}/suspend`),
   activate: (id)  => api.patch(`/admin/passengers/${id}/activate`),
 }
 
-// ── Courses ───────────────────────────────────────────────────────────────────
+// Courses
 export const ridesService = {
   getAll:    (limit=50) => api.get(`/admin/rides?limit=${limit}`),
   getActive: ()         => api.get('/admin/rides/active'),
 }
 
-// ── Finances ──────────────────────────────────────────────────────────────────
+// Finances
 export const financeService = {
   getStats:        ()                 => api.get('/admin/finance/stats'),
-  getChart:        (period='weekly') => api.get(`/admin/finance/chart?period=${period}`),
-  getTransactions: (page=1, limit=20)=> api.get(`/admin/finance/transactions?page=${page}&limit=${limit}`),
+  getChart:        (period='weekly')  => api.get(`/admin/finance/chart?period=${period}`),
+  getTransactions: (page=1, limit=20) => api.get(`/admin/finance/transactions?page=${page}&limit=${limit}`),
 }
 
-// ── Panics ────────────────────────────────────────────────────────────────────
+// Panics
 export const panicsService = {
   getAll:    () => api.get('/admin/panics').catch(() => []),
   getActive: () => api.get('/admin/panics/active').catch(() => []),
   resolve:   (id) => api.patch(`/admin/panics/${id}/resolve`).catch(() => null),
 }
 
+// Config
 export const adminConfigService = {
-  get:    () => api.get('/admin/config').catch(() => null),
-  update: (payload) => api.patch('/admin/config', payload),
-  getPricing:    () => api.get('/admin/config/pricing').catch(() => null),
-  getFinancials: () => api.get('/admin/config/financials').catch(() => null),
-  getSecurity:   () => api.get('/admin/config/security').catch(() => null),
-  getPayments:   () => api.get('/admin/config/payments').catch(() => null),
-  updatePricing:    (payload) => api.patch('/admin/config/pricing', payload),
-  updateFinancials: (payload) => api.patch('/admin/config/financials', payload),
-  updateSecurity:   (payload) => api.patch('/admin/config/security', payload),
-  updatePayments:   (payload) => api.patch('/admin/config/payments', payload),
+  get:              () => api.get('/admin/config').catch(() => null),
+  update:           (p) => api.patch('/admin/config', p),
+  getPricing:       () => api.get('/admin/config/pricing').catch(() => null),
+  getFinancials:    () => api.get('/admin/config/financials').catch(() => null),
+  getSecurity:      () => api.get('/admin/config/security').catch(() => null),
+  getPayments:      () => api.get('/admin/config/payments').catch(() => null),
+  updatePricing:    (p) => api.patch('/admin/config/pricing', p),
+  updateFinancials: (p) => api.patch('/admin/config/financials', p),
+  updateSecurity:   (p) => api.patch('/admin/config/security', p),
+  updatePayments:   (p) => api.patch('/admin/config/payments', p),
 }
 
 export default api
