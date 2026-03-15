@@ -15,7 +15,7 @@ export function Passengers() {
   const [loading,    setLoading]    = useState(false)
 
   const load = useCallback(async()=>{
-    try{const d=await passengersService.getAll();if(d?.length)setPassengers(d)}catch{}
+    try{const d=await passengersService.getAll(); const list=Array.isArray(d)?d:(d?.items??[]); setPassengers(list)}catch{}
     setLoading(false)
   },[])
   useRealtimeSync(load, { interval: 25000, topics: ['passenger', 'passengers', 'account'] })
@@ -168,7 +168,7 @@ export function Rides() {
   const [loading,  setLoading]  = useState(false)
 
   const load = useCallback(async()=>{
-    try{const d=await ridesService.getAll();if(d?.length)setRides(d)}catch{}
+    try{const d=await ridesService.getAll(); const list=Array.isArray(d)?d:(d?.items??d?.data??[]); setRides(list)}catch{}
     setLoading(false)
   },[])
   useRealtimeSync(load, { interval: 10000, topics: ['ride', 'rides', 'trip'] })
@@ -320,8 +320,8 @@ export function Revenue() {
       ])
       if(Array.isArray(t)) setTxs(t)
       if (t?.data && Array.isArray(t.data)) setTxs(t.data)
-      if(Array.isArray(c)) setChart(c)
-      if (c?.data && Array.isArray(c.data)) setChart(c.data)
+      const chartArr = Array.isArray(c)?c:(c?.points??c?.data??[])
+      if(chartArr.length) setChart(chartArr)
       if (s) setStats(s)
     }catch{}
     setLoading(false)

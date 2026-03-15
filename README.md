@@ -34,3 +34,21 @@ Utilise `render.yaml` dans ce dossier `admin` (ici, `rootDir` est `.`).
 - Publish Directory: `dist`
 - Environment Variable: `VITE_API_URL=https://web-production-8d34f.up.railway.app`
 - Rewrite/Redirect rule: `/*` → `/index.html` (Status `200`)
+
+## Deploy sur Vercel
+
+Ce dossier contient déjà `vercel.json` prêt pour React + Vite + React Router.
+
+### Paramètres à utiliser dans Vercel
+
+1. Import le repo GitHub dans Vercel.
+2. Dans **Project Settings → General**, mets **Root Directory** sur `admin` (si ton repo contient ce dossier).
+3. Dans **Project Settings → Environment Variables**, ajoute:
+	- `VITE_API_URL` = `https://web-production-8d34f.up.railway.app`
+4. Lance **Deploy**.
+
+Le fichier `vercel.json` applique déjà:
+- `npm ci` (install)
+- `npm run build` (build)
+- `dist` (output)
+- rewrite SPA `/(.*)` → `/index.html` pour éviter les 404 sur refresh.
