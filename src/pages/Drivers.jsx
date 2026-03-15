@@ -9,14 +9,28 @@ export default function Drivers() {
   const [selected, setSelected] = useState(null)
   const [saving,   setSaving]   = useState(false)
 
+  const [loading, setLoading] = useState(true)
+  const [error,   setError]   = useState(null)
+
   const load = useCallback(async () => {
+    setLoading(true)
+    setError(null)
     try {
       const res = await driversService.getAll()
-      // ✅ FIX: backend retourne { items, total } ou un tableau direct
       const list = Array.isArray(res) ? res : (res?.items ?? [])
       setDrivers(list)
       if (list.length > 0 && !selected) setSelected(list[0])
-    } catch {}
+    } catch (e) {
+      const msg = e?.response?.data?.message || e?.message || 'Erreur de connexion'
+      const status = e?.response?.status
+      if (status === 401 || status === 403) {
+        setError('Session expirée. Veuillez vous reconnecter.')
+      } else {
+        setError(`Impossible de charger les chauffeurs : ${msg}`)
+      }
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   useRealtimeSync(load, { interval: 20000, topics: ['driver', 'drivers', 'account'] })
@@ -148,7 +162,20 @@ export default function Drivers() {
                 ))}
               </tbody>
             </table>
-            {filtered.length === 0 && <EmptyState message="Aucun chauffeur trouvé"/>}
+            {loading && (
+              <div style={{textAlign:'center',padding:'40px 24px',color:'var(--text3)'}}>
+                <div className="spinner" style={{margin:'0 auto 12px'}}/>
+                <div style={{fontSize:13}}>Chargement des chauffeurs...</div>
+              </div>
+            )}
+            {!loading && error && (
+              <div style={{margin:16,padding:'14px 16px',background:'rgba(239,68,68,0.07)',border:'1.5px solid rgba(239,68,68,0.2)',borderRadius:10}}>
+                <div style={{fontSize:13,fontWeight:600,color:'var(--red)',marginBottom:4}}>Erreur de chargement</div>
+                <div style={{fontSize:12,color:'var(--text3)',marginBottom:10}}>{error}</div>
+                <button className="btn btn-ghost btn-sm" onClick={load}>Réessayer</button>
+              </div>
+            )}
+            {!loading && !error && filtered.length === 0 && <EmptyState message="Aucun chauffeur trouvé"/>}
           </div>
         </div>
 

@@ -15,7 +15,13 @@ export function Passengers() {
   const [loading,    setLoading]    = useState(false)
 
   const load = useCallback(async()=>{
-    try{const d=await passengersService.getAll(); const list=Array.isArray(d)?d:(d?.items??[]); setPassengers(list)}catch{}
+    try{
+      const d=await passengersService.getAll()
+      const list=Array.isArray(d)?d:(d?.items??[])
+      setPassengers(list)
+    } catch(e) {
+      console.error('Passagers:', e?.response?.status, e?.message)
+    }
     setLoading(false)
   },[])
   useRealtimeSync(load, { interval: 25000, topics: ['passenger', 'passengers', 'account'] })
@@ -168,7 +174,13 @@ export function Rides() {
   const [loading,  setLoading]  = useState(false)
 
   const load = useCallback(async()=>{
-    try{const d=await ridesService.getAll(); const list=Array.isArray(d)?d:(d?.items??d?.data??[]); setRides(list)}catch{}
+    try{
+      const d=await ridesService.getAll()
+      const list=Array.isArray(d)?d:(d?.items??d?.data??[])
+      setRides(list)
+    } catch(e) {
+      console.error('Courses:', e?.response?.status, e?.message)
+    }
     setLoading(false)
   },[])
   useRealtimeSync(load, { interval: 10000, topics: ['ride', 'rides', 'trip'] })

@@ -14,11 +14,23 @@ import './index.css'
 export default function App() {
   const [user, setUser] = useState(() => {
     const t = localStorage.getItem('koogwe_admin_token')
-    return t ? { name: 'Jean Dupont', email: 'admin@koogwe.com' } : null
+    if (!t) return null
+    // Lire le vrai nom depuis le localStorage (sauvegardé au login)
+    try {
+      const savedUser = localStorage.getItem('koogwe_admin_user')
+      if (savedUser) return JSON.parse(savedUser)
+    } catch {}
+    return { name: 'Administrateur', email: '' }
   })
+
+  const handleLogin = (userData) => {
+    localStorage.setItem('koogwe_admin_user', JSON.stringify(userData))
+    setUser(userData)
+  }
 
   const logout = () => {
     localStorage.removeItem('koogwe_admin_token')
+    localStorage.removeItem('koogwe_admin_user')
     setUser(null)
   }
 
@@ -50,7 +62,7 @@ export default function App() {
     topics: ['document', 'documents', 'panic', 'sos', 'alert'],
   })
 
-  if (!user) return <Login onLogin={setUser} />
+  if (!user) return <Login onLogin={handleLogin} />
 
   return (
     <BrowserRouter>
