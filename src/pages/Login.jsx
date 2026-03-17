@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { authService } from '../services/api'
+// 1. Import du logo depuis ton dossier assets
+import logoPng from '../assets/logo.png'
 
 export default function Login({ onLogin }) {
   const [email,    setEmail]    = useState(localStorage.getItem('koogwe_admin_email') || '')
@@ -45,19 +47,23 @@ export default function Login({ onLogin }) {
 
       <div className="fade-up" style={{width:'100%',maxWidth:440,position:'relative',zIndex:1}}>
         
-        {/* Logo area */}
+        {/* Logo area - MODIFIÉE */}
         <div style={{textAlign:'center',marginBottom:32}}>
           <div style={{
-            width:68,height:68,borderRadius:20,
-            background:'linear-gradient(135deg,#2B5FF5,#5B8BFF)',
-            display:'inline-flex',alignItems:'center',justifyContent:'center',
-            marginBottom:18,boxShadow:'0 12px 40px rgba(43,95,245,0.35)',
+            width:80, height:80, borderRadius:22,
+            background:'#FFFFFF', // Fond blanc pour que le logo PNG soit bien visible
+            display:'inline-flex', alignItems:'center', justifyContent:'center',
+            marginBottom:18, 
+            boxShadow:'0 12px 30px rgba(43,95,245,0.15)',
+            border:'1px solid rgba(43,95,245,0.1)',
             animation:'floatUp 3s ease-in-out infinite',
+            overflow:'hidden'
           }}>
-            <svg width="32" height="32" fill="white" viewBox="0 0 24 24">
-              <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99z"/>
-              <circle cx="7.5" cy="14.5" r="1.5"/><circle cx="16.5" cy="14.5" r="1.5"/>
-            </svg>
+            <img 
+              src={logoPng} 
+              alt="Koogwe Logo" 
+              style={{ width: '75%', height: '75%', objectFit: 'contain' }} 
+            />
           </div>
           <div style={{fontFamily:'Sora,sans-serif',fontSize:28,fontWeight:800,color:'#0D1B4B',letterSpacing:'-0.02em'}}>KOOGWE</div>
           <div style={{fontSize:12,color:'#7A9CC9',letterSpacing:'0.15em',textTransform:'uppercase',marginTop:6,fontWeight:600}}>

@@ -81,6 +81,12 @@ export const panicsService = {
   resolve:   (id) => api.patch(`/admin/panics/${id}/resolve`).catch(() => null),
 }
 
+// Wallets
+export const walletService = {
+  getBalance: (userId) => api.get(`/wallet/balance/${userId}`).catch(() => ({ balance: 0 })),
+  getTransactions: (userId) => api.get(`/wallet/transactions/${userId}`).catch(() => []),
+}
+
 // Config
 export const adminConfigService = {
   get:              () => api.get('/admin/config').catch(() => null),
